@@ -23,20 +23,23 @@ let basePrice = 0;
 let finalPrice = 0;
 let promoDiscount = 0;
 
-// 🔧 Проверка, чтобы желаемый MMR всегда был выше текущего
+// 🔧 НЕ ДАЁМ ПОЛЗУНКАМ ПЕРЕСЕКАТЬСЯ
 function clampDesired() {
-  if (Number(desiredMMR.value) <= Number(currentMMR.value)) {
-    desiredMMR.value = Number(currentMMR.value) + 100;
+  const cur = Number(currentMMR.value);
+  const des = Number(desiredMMR.value);
+
+  if (des <= cur) {
+    desiredMMR.value = cur + 100;
   }
 }
 
-// 💰 Расчёт цены и дней
+// 💰 РАСЧЁТ ЦЕНЫ
 function calcPrice() {
   const cur = Number(currentMMR.value);
   const des = Number(desiredMMR.value);
   const diff = Math.max(des - cur, 0);
 
-  basePrice = diff * 2.6; // цена за 1 MMR
+  basePrice = diff * 2.6; // ✔ 1 MMR = 2.6 ₽
 
   let extra = 0;
   if (optDuo.checked) extra += basePrice * 0.25;
@@ -51,12 +54,12 @@ function calcPrice() {
   finalPrice = price;
   totalPriceEl.textContent = `${finalPrice.toFixed(0)} ₽`;
 
-  // 🕒 Расчёт дней (1 день на каждые 500 MMR, минимум 1)
+  // 🕒 Расчёт дней
   const days = Math.max(Math.ceil(diff / 500), 1);
   etaText.textContent = `~ ${days} дн${days > 1 ? "я" : "ей"}`;
 }
 
-// 🔄 Обновление при изменении ползунков
+// 🔄 ОБНОВЛЕНИЕ ПРИ ДВИЖЕНИИ ПОЛЗУНКОВ
 currentMMR.addEventListener("input", () => {
   currentValue.textContent = currentMMR.value;
   clampDesired();
@@ -70,14 +73,15 @@ desiredMMR.addEventListener("input", () => {
   calcPrice();
 });
 
-// 🔄 Обновление при изменении опций
+// 🔄 ОБНОВЛЕНИЕ ПРИ ИЗМЕНЕНИИ ОПЦИЙ
 [optDuo, optStream, optPriority, optHeroes, optOffline].forEach(el => {
   el.addEventListener("change", calcPrice);
 });
 
-// 🎟️ Промокоды
+// 🎟️ ПРОМОКОДЫ
 applyPromoBtn.addEventListener("click", () => {
   const code = promoInput.value.trim().toUpperCase();
+
   if (!code) {
     promoDiscount = 0;
     promoInfo.textContent = "";
@@ -95,8 +99,34 @@ applyPromoBtn.addEventListener("click", () => {
     promoDiscount = 0;
     promoInfo.textContent = "Неверный промокод";
   }
+
   calcPrice();
 });
 
-// 🟢 Первичный расчёт при загрузке страницы
+// 🟢 ОФОРМЛЕНИЕ ЗАКАЗА (БЕЗ FANPAY)
+checkoutBtn.addEventListener("click", () => {
+  const orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+
+  const payload = {
+    тип: "заказ",
+    номер: orderId,
+    текущий_MMR: Number(currentMMR.value),
+    желаемый_MMR: Number(desiredMMR.value),
+    опции: {
+      дуо: optDuo.checked,
+      стрим: optStream.checked,
+      приоритет: optPriority.checked,
+      герои: optHeroes.checked,
+      офлайн: optOffline.checked,
+    },
+    промокод: promoInput.value.trim(),
+    цена: Number(finalPrice.toFixed(0)),
+  };
+
+  if (tg) {
+    tg.sendData(JSON.stringify(payload));
+  }
+});
+
+// 🟢 Первичный расчёт
 calcPrice();
