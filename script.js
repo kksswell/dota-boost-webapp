@@ -34,7 +34,7 @@ function calcPrice() {
   const des = Number(desiredMMR.value);
   const diff = Math.max(des - cur, 0);
 
-  basePrice = diff * 0.5; // 1 MMR = 0.5 ₽
+  basePrice = diff * 2.6; // 
 
   let extra = 0;
   if (optDuo.checked) extra += basePrice * 0.25;
@@ -91,55 +91,3 @@ applyPromoBtn.addEventListener("click", () => {
   }
   calcPrice();
 });
-
-// === Оформление заказа + FunPay + номер заказа ===
-checkoutBtn.addEventListener("click", () => {
-  // Генерация уникального номера заказа
-  const orderId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
-
-  const payload = {
-    тип: "заказ",
-    номер: orderId,
-    текущий_MMR: Number(currentMMR.value),
-    желаемый_MMR: Number(desiredMMR.value),
-    опции: {
-      дуо: optDuo.checked,
-      стрим: optStream.checked,
-      приоритет: optPriority.checked,
-      герои: optHeroes.checked,
-      офлайн: optOffline.checked,
-    },
-    промокод: promoInput.value.trim(),
-    цена: Number(finalPrice.toFixed(0)),
-  };
-
-  // Текст для FunPay
-  const funpayText =
-`🔥 Заказ № ${payload.номер}
-
-Буст Dota 2
-MMR: ${payload.текущий_MMR} → ${payload.желаемый_MMR}
-
-Опции:
-• Duo: ${payload.опции.дуо ? "Да" : "Нет"}
-• Стрим: ${payload.опции.стрим ? "Да" : "Нет"}
-• Приоритет: ${payload.опции.приоритет ? "Да" : "Нет"}
-• Выбор героев: ${payload.опции.герои ? "Да" : "Нет"}
-• Офлайн: ${payload.опции.офлайн ? "Да" : "Нет"}
-
-Промокод: ${payload.промокод || "нет"}
-💰 Цена: ${payload.цена} ₽
-
-Отправьте этот текст продавцу на FunPay.`;
-
-  payload.funpay_text = funpayText;
-
-  if (tg) {
-    tg.sendData(JSON.stringify(payload));
-  }
-
-  const funpayLot = "https://funpay.com/lots/offer?id=69707439"; // ← вставь ссылку на свой лот
-  window.location.href = funpayLot;
-});
-
-calcPrice();
