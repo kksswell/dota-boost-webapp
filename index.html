@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Буст Dota 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-overlay"></div>
+  <div class="app">
+    <h1 class="title">Ваш заказ</h1>
+
+    <div class="mmr-block">
+      <div class="mmr-row">
+        <div class="mmr-label">Текущий MMR</div>
+        <div class="mmr-value" id="currentValue">2000</div>
+      </div>
+      <input type="range" id="currentMMR" min="0" max="8000" step="100" value="2000">
+
+      <div class="mmr-row">
+        <div class="mmr-label">Желаемый MMR</div>
+        <div class="mmr-value" id="desiredValue">3000</div>
+      </div>
+      <input type="range" id="desiredMMR" min="0" max="8000" step="100" value="3000">
+
+      <div class="mmr-scale">
+        <span>0</span><span>2000</span><span>4000</span><span>6000</span><span>8000</span>
+      </div>
+    </div>
+
+    <div class="options">
+      <div class="option-row">
+        <span>Примерное время выполнения</span>
+        <span id="etaText">~ 3 дня</span>
+      </div>
+
+      <div class="option-row">
+        <span>Совместная игра (Duo Queue)</span>
+        <label class="switch">
+          <input type="checkbox" id="optDuo">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="option-row">
+        <span>Трансляция буста</span>
+        <label class="switch">
+          <input type="checkbox" id="optStream">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="option-row">
+        <span>Приоритетное выполнение</span>
+        <label class="switch">
+          <input type="checkbox" id="optPriority">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="option-row">
+        <span>Выбор героев</span>
+        <label class="switch">
+          <input type="checkbox" id="optHeroes">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="option-row">
+        <span>Играть офлайн</span>
+        <label class="switch">
+          <input type="checkbox" id="optOffline">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="discount-block">
+      <div class="discount-title">СКИДКА</div>
+      <div class="discount-row">
+        <input type="text" id="promoInput" placeholder="Промокод">
+        <button id="applyPromo">Применить</button>
+      </div>
+      <div class="discount-info" id="promoInfo"></div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-row">
+        <span>Итоговая цена</span>
+        <span class="price" id="totalPrice">0 ₽</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn">Оформить заказ</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
