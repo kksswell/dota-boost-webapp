@@ -23,18 +23,20 @@ let basePrice = 0;
 let finalPrice = 0;
 let promoDiscount = 0;
 
+// 🔧 Проверка, чтобы желаемый MMR всегда был выше текущего
 function clampDesired() {
   if (Number(desiredMMR.value) <= Number(currentMMR.value)) {
     desiredMMR.value = Number(currentMMR.value) + 100;
   }
 }
 
+// 💰 Расчёт цены и дней
 function calcPrice() {
   const cur = Number(currentMMR.value);
   const des = Number(desiredMMR.value);
   const diff = Math.max(des - cur, 0);
 
-  basePrice = diff * 2.6; // 
+  basePrice = diff * 2.6; // цена за 1 MMR
 
   let extra = 0;
   if (optDuo.checked) extra += basePrice * 0.25;
@@ -49,10 +51,12 @@ function calcPrice() {
   finalPrice = price;
   totalPriceEl.textContent = `${finalPrice.toFixed(0)} ₽`;
 
+  // 🕒 Расчёт дней (1 день на каждые 500 MMR, минимум 1)
   const days = Math.max(Math.ceil(diff / 500), 1);
   etaText.textContent = `~ ${days} дн${days > 1 ? "я" : "ей"}`;
 }
 
+// 🔄 Обновление при изменении ползунков
 currentMMR.addEventListener("input", () => {
   currentValue.textContent = currentMMR.value;
   clampDesired();
@@ -66,10 +70,12 @@ desiredMMR.addEventListener("input", () => {
   calcPrice();
 });
 
+// 🔄 Обновление при изменении опций
 [optDuo, optStream, optPriority, optHeroes, optOffline].forEach(el => {
   el.addEventListener("change", calcPrice);
 });
 
+// 🎟️ Промокоды
 applyPromoBtn.addEventListener("click", () => {
   const code = promoInput.value.trim().toUpperCase();
   if (!code) {
@@ -91,3 +97,6 @@ applyPromoBtn.addEventListener("click", () => {
   }
   calcPrice();
 });
+
+// 🟢 Первичный расчёт при загрузке страницы
+calcPrice();
